@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AlixxpresApplication<alixxpres>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.jahm.alixxpres.AlixxpresApplication",
+            "projectName": "alixxpres",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
