@@ -1,10 +1,11 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-COPY src src
+# Copiar desde la subcarpeta alixxpres
+COPY alixxpres/mvnw .
+COPY alixxpres/.mvn .mvn
+COPY alixxpres/pom.xml .
+COPY alixxpres/src src
 
 RUN chmod +x ./mvnw
 RUN ./mvnw clean package -DskipTests
