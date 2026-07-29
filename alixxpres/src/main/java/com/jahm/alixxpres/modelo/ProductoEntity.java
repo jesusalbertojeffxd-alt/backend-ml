@@ -9,7 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "productos")
@@ -30,19 +34,18 @@ public class ProductoEntity {
     private String descripcion;
 
     @Column(nullable = false)
-    private double precio;
+    private Double precio;
 
     @Column(nullable = false)
     private Integer stock;
 
     private String imagenUrl;
 
-    // --- Relaciones de llaves Fk ---------
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "categoria_id") // llave foranea de categoria
+    @JoinColumn(name = "categoria_id")
     private CategoriaEntity categoria;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "proveedor_id") // llave foranea de proveedor
+    @JoinColumn(name = "proveedor_id")
     private ProveedorEntity proveedor;
 }
