@@ -30,6 +30,7 @@ public class VentaController {
     
     private final VentaServices servicio;
 
+    // ✅ SOLO ADMIN puede ver todas las ventas
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<VentaEntity>> listar() {
@@ -40,6 +41,7 @@ public class VentaController {
         }
     }
 
+    // ✅ Admin y Cliente pueden ver una venta específica
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CLIENTE')")
     public ResponseEntity<VentaEntity> obtenerDetalles(@PathVariable Long id) {
@@ -50,6 +52,7 @@ public class VentaController {
         }
     }
 
+    // ✅ SOLO ADMIN puede eliminar ventas
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> eliminarVenta(@PathVariable Long id) {
@@ -61,8 +64,9 @@ public class VentaController {
         }
     }
 
+    // ✅ SOLO CLIENTE puede crear ventas (comprar)
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_CLIENTE', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_CLIENTE')")
     public ResponseEntity<?> crearVenta(@RequestBody VentaEntity venta, Principal principal) {
         try {
             String email = principal.getName();
@@ -73,6 +77,7 @@ public class VentaController {
         }
     }
 
+    // ✅ SOLO ADMIN puede actualizar ventas
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> actualizarVenta(@PathVariable Long id, @RequestBody VentaEntity venta) {
@@ -84,6 +89,7 @@ public class VentaController {
         }
     }
 
+    // ✅ SOLO CLIENTE puede ver sus propias compras
     @GetMapping("/mis-compras")
     @PreAuthorize("hasAuthority('ROLE_CLIENTE')")
     public ResponseEntity<List<VentaEntity>> listarMisCompras(Principal principal) {
