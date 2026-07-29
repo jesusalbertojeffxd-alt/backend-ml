@@ -57,7 +57,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/proveedores/**").permitAll()
                 
                 // ============ VENTAS - POST (SOLO CLIENTES) ============
-                // ✅ SOLO CLIENTES PUEDEN COMPRAR
+                // ✅ AGREGAR AMBAS LÍNEAS PARA ASEGURAR
+                .requestMatchers(HttpMethod.POST, "/api/v1/ventas").hasAuthority("ROLE_CLIENTE")
                 .requestMatchers(HttpMethod.POST, "/api/v1/ventas/**").hasAuthority("ROLE_CLIENTE")
                 
                 // ============ VENTAS - GET ============
