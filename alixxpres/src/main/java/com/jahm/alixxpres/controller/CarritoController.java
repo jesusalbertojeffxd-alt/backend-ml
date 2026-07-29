@@ -1,0 +1,116 @@
+package com.jahm.alixxpres.controller;
+
+import com.jahm.alixxpres.dto.AgregarCarritoRequest;
+import com.jahm.alixxpres.dto.ActualizarCarritoRequest;
+import com.jahm.alixxpres.dto.CarritoDTO;
+import com.jahm.alixxpres.services.CarritoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/v1/carrito")
+@CrossOrigin(origins = "*")
+public class CarritoController {
+    
+    @Autowired
+    private CarritoService carritoService;
+    
+    @GetMapping
+    public ResponseEntity<?> getCarrito(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            CarritoDTO carrito = carritoService.getCarritoByUsername(username);
+            return ResponseEntity.ok(carrito);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+    
+    @GetMapping("/mi-carrito")
+    public ResponseEntity<?> getOrCreateCarrito(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            CarritoDTO carrito = carritoService.getOrCreateCarrito(username);
+            return ResponseEntity.ok(carrito);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+    
+    @PostMapping("/agregar")
+    public ResponseEntity<?> agregarProducto(
+            Authentication authentication,
+            @RequestBody AgregarCarritoRequest request) {
+        try {
+            String username = authentication.getName();
+            CarritoDTO carrito = carritoService.agregarProducto(
+                username,
+                request.getProductoId(),
+                request.getCantidad()
+            );
+            return ResponseEntity.ok(carrito);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+    
+    @PutMapping("/actualizar")
+    public ResponseEntity<?> actualizarCantidad(
+            Authentication authentication,
+            @RequestBody ActualizarCarritoRequest request) {
+        try {
+            String username = authentication.getName();
+            CarritoDTO carrito = carritoService.actualizarCantidad(
+                username,
+                request.getProductoId(),
+                request.getCantidad()
+            );
+            return ResponseEntity.ok(carrito);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+    
+    @DeleteMapping("/{productoId}")
+    public ResponseEntity<?> eliminarProducto(
+            Authentication authentication,
+            @PathVariable Long productoId) {
+        try {
+            String username = authentication.getName();
+            CarritoDTO carrito = carritoService.eliminarProducto(username, productoId);
+            return ResponseEntity.ok(carrito);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+    
+    @DeleteMapping("/vaciar")
+    public ResponseEntity<?> vaciarCarrito(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            carritoService.vaciarCarrito(username);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Carrito vaciado exitosamente");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+}
