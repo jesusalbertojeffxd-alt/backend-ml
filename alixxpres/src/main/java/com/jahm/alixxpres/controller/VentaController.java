@@ -24,12 +24,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/v1/ventas")
-@CrossOrigin(origins = {
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io:5173",
-    "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io:5173"
-})
+@CrossOrigin(
+    origins = {
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io:5173",
+        "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io:5173",
+        "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io",
+        "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io"
+    },
+    allowedHeaders = "*",
+    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
+    allowCredentials = "true"
+)
 @RequiredArgsConstructor
 public class VentaController {
     
