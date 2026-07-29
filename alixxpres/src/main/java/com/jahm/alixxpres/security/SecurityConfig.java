@@ -50,40 +50,38 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ============ ENDPOINTS PÚBLICOS ============
+                // ============ 1. ENDPOINTS PÚBLICOS ============
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/productos/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categorias/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/proveedores/**").permitAll()
                 
-                // ============ VENTAS - POST (SOLO CLIENTES) ============
-                // ✅ AGREGAR AMBAS LÍNEAS PARA ASEGURAR
-                .requestMatchers(HttpMethod.POST, "/api/v1/ventas").hasAuthority("ROLE_CLIENTE")
+                // ============ 2. VENTAS - POST (SOLO CLIENTES) ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/ventas/**").hasAuthority("ROLE_CLIENTE")
                 
-                // ============ VENTAS - GET ============
+                // ============ 3. VENTAS - GET ============
                 .requestMatchers(HttpMethod.GET, "/api/v1/ventas").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/ventas/mis-compras").hasAuthority("ROLE_CLIENTE")
                 
-                // ============ PRODUCTOS - ADMIN ============
+                // ============ 4. PRODUCTOS - ADMIN ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 
-                // ============ CATEGORÍAS - ADMIN ============
+                // ============ 5. CATEGORÍAS - ADMIN ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 
-                // ============ PROVEEDORES - ADMIN ============
+                // ============ 6. PROVEEDORES - ADMIN ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 
-                // ============ PAGOS (Clientes y Admins) ============
+                // ============ 7. PAGOS (Clientes y Admins) ============
                 .requestMatchers("/api/v1/pagos/**").hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN")
                 
-                // ============ CUALQUIER OTRA PETICIÓN ============
+                // ============ 8. CUALQUIER OTRA PETICIÓN ============
                 .anyRequest().authenticated()
             );
 
