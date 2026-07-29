@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = "*")  // ✅ AGREGAR ESTA LÍNEA
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -53,8 +55,5 @@ public class AuthController {
         }catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-    
     }
-    
 }
