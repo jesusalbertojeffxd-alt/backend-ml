@@ -1,0 +1,75 @@
+package com.jahm.alixxpres.modelo;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "carritos")
+public class CarritoEntity {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @OneToOne
+    @JoinColumn(name = "usuario_id", unique = true)
+    private UsuarioEntity usuario;
+    
+    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CarritoItemEntity> items = new ArrayList<>();
+    
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fechaCreacion;
+    
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;
+    
+    // Constructor
+    public CarritoEntity() {
+        this.fechaCreacion = LocalDateTime.now();
+        this.fechaActualizacion = LocalDateTime.now();
+    }
+    
+    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public UsuarioEntity getUsuario() {
+        return usuario;
+    }
+    
+    public void setUsuario(UsuarioEntity usuario) {
+        this.usuario = usuario;
+    }
+    
+    public List<CarritoItemEntity> getItems() {
+        return items;
+    }
+    
+    public void setItems(List<CarritoItemEntity> items) {
+        this.items = items;
+    }
+    
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+    
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+    
+    public LocalDateTime getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+    
+    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
+    }
+}
