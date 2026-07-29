@@ -50,29 +50,55 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // ============ ENDPOINTS PUBLICOS ============
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/productos/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categorias/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/proveedores/**").permitAll()
                 
-                .requestMatchers(HttpMethod.POST, "/api/v1/ventas/**").hasAuthority("ROLE_CLIENTE")
+                // ============ ENDPOINTS DEL CARRITO (NUEVO) ============
+                // Cualquier usuario autenticado (cliente o admin) puede ver su carrito
+                .requestMatchers(HttpMethod.GET, "/api/v1/carrito/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/carrito").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/carrito/mi-carrito").authenticated()
                 
+                // Agregar, actualizar y eliminar del carrito - solo clientes
+                .requestMatchers(HttpMethod.POST, "/api/v1/carrito/agregar").hasAuthority("ROLE_CLIENTE")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/carrito/actualizar").hasAuthority("ROLE_CLIENTE")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/carrito/**").hasAuthority("ROLE_CLIENTE")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/carrito/vaciar").hasAuthority("ROLE_CLIENTE")
+                
+                // ============ ENDPOINTS DE VENTAS ============
+                .requestMatchers(HttpMethod.POST, "/api/v1/ventas/**").hasAuthority("ROLE_CLIENTE")
                 .requestMatchers(HttpMethod.GET, "/api/v1/ventas").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/ventas/mis-compras").hasAuthority("ROLE_CLIENTE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/ventas/**").hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/ventas/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/ventas/**").hasAuthority("ROLE_ADMIN")
                 
+                // ============ ENDPOINTS DE PRODUCTOS ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 
+                // ============ ENDPOINTS DE CATEGORIAS ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 
+                // ============ ENDPOINTS DE PROVEEDORES ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 
+                // ============ ENDPOINTS DE PAGOS ============
                 .requestMatchers("/api/v1/pagos/**").hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN")
+                
+                // ============ ENDPOINTS DE CLIENTES ============
+                .requestMatchers(HttpMethod.GET, "/api/v1/clientes/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/clientes/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/clientes/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/clientes/**").hasAuthority("ROLE_ADMIN")
                 
                 .anyRequest().authenticated()
             );
