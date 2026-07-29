@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +24,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/v1/ventas")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class VentaController {
     
     private final VentaServices servicio;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<VentaEntity>> listar() {
         try {
             return ResponseEntity.ok(servicio.obtenerTodos());
@@ -39,6 +41,7 @@ public class VentaController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CLIENTE')")
     public ResponseEntity<VentaEntity> obtenerDetalles(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(servicio.obtenerPorId(id));
@@ -48,6 +51,7 @@ public class VentaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> eliminarVenta(@PathVariable Long id) {
         try {
             servicio.eliminarVenta(id);
@@ -58,6 +62,7 @@ public class VentaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_CLIENTE', 'ROLE_ADMIN')")
     public ResponseEntity<?> crearVenta(@RequestBody VentaEntity venta, Principal principal) {
         try {
             String email = principal.getName();
@@ -69,6 +74,7 @@ public class VentaController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> actualizarVenta(@PathVariable Long id, @RequestBody VentaEntity venta) {
         try {
             VentaEntity ventaActualizado = servicio.actualizarVenta(id, venta);
@@ -79,6 +85,7 @@ public class VentaController {
     }
 
     @GetMapping("/mis-compras")
+    @PreAuthorize("hasAuthority('ROLE_CLIENTE')")
     public ResponseEntity<List<VentaEntity>> listarMisCompras(Principal principal) {
         try {
             String email = principal.getName();
