@@ -87,14 +87,21 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:5173",
             "http://localhost:5174",
+            "http://localhost:3000",
+            "http://127.0.0.1:5173",
             "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io:5173",
             "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io:5173",
-            "*"
+            "https://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io:5173",
+            "https://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io:5173",
+            "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io",
+            "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io"
         ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setMaxAge(3600L);
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
