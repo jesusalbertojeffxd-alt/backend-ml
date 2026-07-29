@@ -8,17 +8,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "usuarios")
-@Getter  // ← Agregar
-@Setter  // ← Agregar
-@NoArgsConstructor  // ← Agregar
-@AllArgsConstructor  // ← Agregar
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,9 +36,6 @@ public class UsuarioEntity {
     @Column(nullable = false)
     private Rol rol;
 
-    @Column(nullable = true)
     private String direccion;
-
-    @Column(nullable = true)
     private String telefono;
 }
