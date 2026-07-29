@@ -50,38 +50,30 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ============ 1. ENDPOINTS PÚBLICOS ============
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/productos/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categorias/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/proveedores/**").permitAll()
                 
-                // ============ 2. VENTAS - POST (SOLO CLIENTES) ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/ventas/**").hasAuthority("ROLE_CLIENTE")
                 
-                // ============ 3. VENTAS - GET ============
                 .requestMatchers(HttpMethod.GET, "/api/v1/ventas").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/ventas/mis-compras").hasAuthority("ROLE_CLIENTE")
                 
-                // ============ 4. PRODUCTOS - ADMIN ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/**").hasAuthority("ROLE_ADMIN")
                 
-                // ============ 5. CATEGORÍAS - ADMIN ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/categorias/**").hasAuthority("ROLE_ADMIN")
                 
-                // ============ 6. PROVEEDORES - ADMIN ============
                 .requestMatchers(HttpMethod.POST, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/proveedores/**").hasAuthority("ROLE_ADMIN")
                 
-                // ============ 7. PAGOS (Clientes y Admins) ============
                 .requestMatchers("/api/v1/pagos/**").hasAnyAuthority("ROLE_CLIENTE", "ROLE_ADMIN")
                 
-                // ============ 8. CUALQUIER OTRA PETICIÓN ============
                 .anyRequest().authenticated()
             );
 
@@ -96,11 +88,13 @@ public class SecurityConfig {
             "http://localhost:5173",
             "http://localhost:5174",
             "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io:5173",
-            "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io:5173"
+            "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io:5173",
+            "*"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
