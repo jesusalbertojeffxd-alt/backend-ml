@@ -1,77 +1,66 @@
 package com.jahm.alixxpres.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-
-import com.jahm.alixxpres.modelo.ProductoEntity;
-import com.jahm.alixxpres.services.ProductoService;
-
-import lombok.RequiredArgsConstructor;
+import com.jahm.alixxpres.model.Producto;
+import com.jahm.alixxpres.repository.ProductoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-
 @RestController
 @RequestMapping("/api/v1/productos")
-@CrossOrigin(origins = "http://localhost:5173") // ✅ CORREGIDO a HTTP
-@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ProductoController {
-    private final ProductoService servicio;
+
+    @Autowired
+    private ProductoRepository productoRepository;
 
     @GetMapping
-    public ResponseEntity<List<ProductoEntity>> listar() {
-        try {
-            return ResponseEntity.ok(servicio.obtenerTodos());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public List<Producto> getAllProductos() {
+        return productoRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoEntity> obtenerDetalles(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(servicio.obtenerPorId(id));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarProducto(@PathVariable Long id) {
-        try {
-            servicio.eliminarProducto(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
+        return productoRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<ProductoEntity> crearProducto(@RequestBody ProductoEntity producto) {
-        try {
-            ProductoEntity productoGuardado = servicio.guardarProducto(producto);
-            return new ResponseEntity<>(productoGuardado, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
+        Producto saved = productoRepository.save(producto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarProducto(@PathVariable Long id, @RequestBody ProductoEntity producto) {
-        try {
-            ProductoEntity productoActualizado = servicio.actualizarProducto(id, producto);
-            return ResponseEntity.ok(productoActualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        return productoRepository.findById(id)
+                .map(existing -> {
+                    existing.setNombre(producto.getNombre());
+                    existing.setDescripcion(producto.getDescripcion());
+                    existing.setPrecio(producto.getPrecio());
+                    existing.setStock(producto.getStock());
+                    existing.setImagenUrl(producto.getImagenUrl());
+                    existing.setCategoria(producto.getCategoria());
+                    existing.setProveedor(producto.getProveedor());
+                    return ResponseEntity.ok(productoRepository.save(existing));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
+        if (productoRepository.existsById(id)) {
+            productoRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
         }
+        return ResponseEntity.notFound().build();
     }
 }
