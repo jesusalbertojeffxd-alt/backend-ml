@@ -12,20 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/productos")
-@CrossOrigin(
-    origins = {
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:3000",
-        "http://127.0.0.1:5173",
-        "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io:5173",
-        "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io:5173",
-        "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io",
-        "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io"
-    },
-    allowedHeaders = "*",
-    allowCredentials = "true"
-)
+@CrossOrigin(origins = "*")
 public class ProductoController {
 
     @Autowired
@@ -68,7 +55,7 @@ public class ProductoController {
     public ResponseEntity<?> updateProducto(@PathVariable Long id, @RequestBody ProductoEntity producto) {
         try {
             producto.setId(id);
-            ProductoEntity productoActualizado = productoService.save(producto);
+            ProductoEntity productoActualizado = productoService.update(id, producto);
             return ResponseEntity.ok(productoActualizado);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
