@@ -24,7 +24,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/v1/ventas")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://civeh5hm5leeopm2u7feman9.168.231.67.126.sslip.io:5173",
+    "http://epqy26ctakwdqnuavcsjlb33.168.231.67.126.sslip.io:5173"
+})
 @RequiredArgsConstructor
 public class VentaController {
     
@@ -61,15 +66,23 @@ public class VentaController {
         }
     }
 
-    // ✅ SOLO CLIENTE puede crear ventas
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_CLIENTE')")
     public ResponseEntity<?> crearVenta(@RequestBody VentaEntity venta, Principal principal) {
         try {
-            String email = principal.getName();
-            VentaEntity nuevaVenta = servicio.procesarVenta(venta, email);
+            System.out.println("=== CREANDO VENTA ===");
+            System.out.println("Venta recibida: " + venta);
+            System.out.println("Principal: " + principal);
+            
+            String username = principal.getName();
+            System.out.println("Username: " + username);
+            
+            VentaEntity nuevaVenta = servicio.procesarVenta(venta, username);
+            System.out.println("Venta creada: " + nuevaVenta);
+            
             return new ResponseEntity<>(nuevaVenta, HttpStatus.CREATED);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -89,8 +102,8 @@ public class VentaController {
     @PreAuthorize("hasAuthority('ROLE_CLIENTE')")
     public ResponseEntity<List<VentaEntity>> listarMisCompras(Principal principal) {
         try {
-            String email = principal.getName();
-            List<VentaEntity> ventas = servicio.obtenerVentasPorCliente(email);
+            String username = principal.getName();
+            List<VentaEntity> ventas = servicio.obtenerVentasPorCliente(username);
             return ResponseEntity.ok(ventas);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
