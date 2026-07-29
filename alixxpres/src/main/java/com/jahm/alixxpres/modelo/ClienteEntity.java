@@ -6,14 +6,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "clientes")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClienteEntity {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private String nombre;
     private String email;
     private String direccion;
