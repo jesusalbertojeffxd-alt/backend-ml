@@ -32,3 +32,4 @@ public class CarritoItemEntity {
     public Integer getCantidad() { return cantidad; }
     public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
 }
+
